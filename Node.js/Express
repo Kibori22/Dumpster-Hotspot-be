@@ -45,3 +45,19 @@ const marketplace = [
 
 const matches = findDirectMatches(myItem, marketplace);
 console.log("Potential Matches:", matches);
+// This is the "Endpoint" the frontend would call
+app.get('/api/matches/:itemId', (req, res) => {
+    const itemId = req.params.itemId;
+    
+    // 1. Find the item the user is trading from the database
+    const userItem = database.findItemById(itemId); 
+    
+    // 2. Get all other items
+    const allItems = database.getAllAvailableItems();
+
+    // 3. Run the algorithm we built
+    const potentialMatches = findDirectMatches(userItem, allItems);
+
+    // 4. Send the data back to the frontend
+    res.json(potentialMatches); 
+});

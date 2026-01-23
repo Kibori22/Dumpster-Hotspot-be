@@ -61,3 +61,49 @@ app.get('/api/matches/:itemId', (req, res) => {
     // 4. Send the data back to the frontend
     res.json(potentialMatches); 
 });
+/**
+ * Finds 3-way circular trade opportunities.
+ * @param {Object} itemA - The starting item (User A's item).
+ * @param {Array} marketplace - All items available for trade.
+ * @returns {Array} - An array of "Trade Circles" found.
+ */
+function findCircularMatches(itemA, marketplace) {
+  const circles = [];
+
+  // Step 1: Find people who have what User A wants (User B)
+  const potentialBs = marketplace.filter(itemB => 
+    itemA.lookingFor.includes(itemB.category)
+  );
+
+  potentialBs.forEach(itemB => {
+    // Step 2: Find people who have what User B wants (User C)
+    const potentialCs = marketplace.filter(itemC => 
+      itemB.lookingFor.includes(itemC.category)
+    );
+
+    potentialCs.forEach(itemC => {
+      // Step 3: Check if User C wants what User A has (Closing the circle!)
+      if (itemC.lookingFor.includes(itemA.category)) {
+        circles.push({
+          step1: `${itemA.ownerId} gives ${itemA.category} to ${itemC.ownerId}`,
+          step2: `${itemB.ownerId} gives ${itemB.category} to ${itemA.ownerId}`,
+          step3: `${itemC.ownerId} gives ${itemC.category} to ${itemB.ownerId}`,
+          participants: [itemA.ownerId, itemB.ownerId, itemC.ownerId]
+        });
+      }
+    });
+  });
+
+  return circles;
+}
+
+// --- Example Data ---
+const myItem = { ownerId: "Alice", category: "Toaster", lookingFor: ["Plant"] };
+
+const market = [
+  { ownerId: "Bob", category: "Plant", lookingFor: ["Book"] },
+  { ownerId: "Charlie", category: "Book", lookingFor: ["Toaster"] }
+];
+
+const results = findCircularMatches(myItem, market);
+console.log("Found Trade Circle:", results);

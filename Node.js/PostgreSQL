@@ -1,0 +1,13 @@
+-- PostgreSQL Table Definition
+CREATE TABLE items (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(50), -- e.g., Electronics, Furniture, Services
+    condition VARCHAR(50), -- e.g., New, Like New, Used
+    desired_trade TEXT,    -- What the user wants in return
+    image_url TEXT,
+    status VARCHAR(20) DEFAULT 'available', -- available, pending, traded
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

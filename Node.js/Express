@@ -1,0 +1,9 @@
+// A simple JavaScript object representing an item in the database
+const itemSchema = {
+  ownerId: "user_123",
+  title: "Vintage Camera",
+  description: "Perfect condition, looking for a tablet or high-end headphones.",
+  categories: ["Electronics", "Photography"],
+  status: "available", // available, pending_trade, traded
+  lookingFor: ["Tablets", "Audio Gear"] // Tags to help the matching algorithm
+};

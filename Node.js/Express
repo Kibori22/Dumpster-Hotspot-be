@@ -7,3 +7,41 @@ const itemSchema = {
   status: "available", // available, pending_trade, traded
   lookingFor: ["Tablets", "Audio Gear"] // Tags to help the matching algorithm
 };
+/**
+ * Finds direct barter matches between users.
+ * @param {Object} item - The item the user is currently offering.
+ * @param {Array} allItems - The global list of available items from other users.
+ * @returns {Array} - An array of matching items.
+ */
+function findDirectMatches(item, allItems) {
+  return allItems.filter(potentialMatch => {
+    // 1. Ensure we aren't matching with our own item
+    if (item.ownerId === potentialMatch.ownerId) return false;
+
+    // 2. Check if the potential item is something we want
+    const userWantsMatch = item.lookingFor.includes(potentialMatch.category);
+
+    // 3. Check if the potential match owner wants what we have
+    const matchOwnerWantsOurs = potentialMatch.lookingFor.includes(item.category);
+
+    // Only return if both conditions are true (The "Double Coincidence")
+    return userWantsMatch && matchOwnerWantsOurs;
+  });
+}
+
+// --- Example Usage ---
+const myItem = {
+  id: "item_01",
+  ownerId: "user_A",
+  category: "Electronics",
+  lookingFor: ["Furniture", "Books"]
+};
+
+const marketplace = [
+  { id: "item_02", ownerId: "user_B", category: "Furniture", lookingFor: ["Electronics"] }, // Match!
+  { id: "item_03", ownerId: "user_C", category: "Books", lookingFor: ["Clothing"] },      // No match
+  { id: "item_04", ownerId: "user_D", category: "Furniture", lookingFor: ["Tools"] }       // No match
+];
+
+const matches = findDirectMatches(myItem, marketplace);
+console.log("Potential Matches:", matches);

@@ -107,3 +107,95 @@ const market = [
 
 const results = findCircularMatches(myItem, market);
 console.log("Found Trade Circle:", results);
+// collection: items
+{
+  id: "item_123",
+  ownerId: "user_A",
+  title: "Vintage Camera",
+  description: "Perfect condition, looking for a tablet",
+  category: "Electronics",
+  status: "available", // available, pending, traded
+  tags: ["camera", "photography"],
+  lookingFor: ["tablet", "ipad"] // helps the matching engine
+}
+// collection: trades
+{
+  id: "trade_456",
+  initiatorId: "user_A",
+  receiverId: "user_B",
+  offeredItems: ["item_123"],
+  requestedItems: ["item_789"],
+  status: "proposed", // proposed, accepted, rejected, completed
+  createdAt: "2026-01-21T..."
+}
+import React, { useState } from 'react';
+
+/**
+ * AddItemForm
+ * This component allows users to list an item they want to barter.
+ */
+const AddItemForm = () => {
+  // Local state to manage form inputs
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: 'General',
+    lookingFor: '', // This is key for the barter matching logic
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Logic to send data to your backend (e.g., Firebase or Node.js)
+    console.log('Item submitted to marketplace:', formData);
+    alert('Item listed for trade!');
+  };
+
+  return (
+    <div style={styles.container}>
+      <h2>List an Item for Barter</h2>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <label>Item Title</label>
+        <input 
+          name="title" 
+          placeholder="e.g., Acoustic Guitar" 
+          onChange={handleChange} 
+          required 
+        />
+
+        <label>Description</label>
+        <textarea 
+          name="description" 
+          placeholder="Describe the condition and history..." 
+          onChange={handleChange} 
+        />
+
+        <label>What are you looking for?</label>
+        <input 
+          name="lookingFor" 
+          placeholder="e.g., Electric Keyboard or Power Tools" 
+          onChange={handleChange} 
+          required
+        />
+
+        <button type="submit" style={styles.button}>Post to Marketplace</button>
+      </form>
+    </div>
+  );
+};
+
+// Simple inline styles for demonstration
+const styles = {
+  container: { maxWidth: '400px', margin: 'auto', padding: '20px', fontFamily: 'Arial' },
+  form: { display: 'flex', flexDirection: 'column', gap: '10px' },
+  button: { padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', cursor: 'pointer' }
+};
+
+export default AddItemForm;

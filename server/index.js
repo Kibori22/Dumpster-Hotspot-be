@@ -18,3 +18,18 @@ app.get('/users', async (req, res) => {
 });
 
 app.listen(5000, () => console.log("Server is organized and running! 🚀"));
+// Example: Adding a new user to PostgreSQL
+app.post('/api/users', async (req, res) => {
+  const { username, email, password } = req.body;
+  
+  try {
+    const newUser = await db.query(
+      "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *",
+      [username, email, password] // Use $1, $2 for security (prevents SQL injection)
+    );
+    res.json(newUser.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error while creating user");
+  }
+});
